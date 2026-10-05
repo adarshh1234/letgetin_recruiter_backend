@@ -7,9 +7,9 @@ export class WhatsAppService {
 
     console.log(`[META WHATSAPP SERVICE] 💬 Verification OTP code for +${cleanPhone}: ${otpCode}`);
 
-    if (!env.META_ACCESS_TOKEN || !env.META_PHONE_NUMBER_ID) {
+    if (env.MOCK_WHATSAPP_OTP || !env.META_ACCESS_TOKEN || !env.META_PHONE_NUMBER_ID) {
       console.log(
-        `[META WHATSAPP SERVICE] ℹ️ META_ACCESS_TOKEN or META_PHONE_NUMBER_ID not set. Simulated WhatsApp delivery to +${cleanPhone}`
+        `[META WHATSAPP SERVICE] ℹ️ ${env.MOCK_WHATSAPP_OTP ? 'Mock WhatsApp OTP enabled' : 'META_ACCESS_TOKEN or META_PHONE_NUMBER_ID not set'}. Simulated WhatsApp delivery to +${cleanPhone}`
       );
       return true;
     }

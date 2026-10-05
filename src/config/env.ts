@@ -38,6 +38,7 @@ const envSchema = z.object({
   META_ACCESS_TOKEN: z.string().optional(),
   META_PHONE_NUMBER_ID: z.string().optional(),
   META_VERIFY_TOKEN: z.string().optional(),
+  MOCK_WHATSAPP_OTP: z.string().transform((val: string) => val.toLowerCase() === 'true').default('false'),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),

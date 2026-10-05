@@ -28,9 +28,9 @@ const isLocalDevelopment = () => env.NODE_ENV === 'development';
 /**
  * Returns true when the WhatsApp testing bypass is enabled.
  *
- * WhatsApp behavior is intentionally kept as it was before.
+ * WhatsApp testing is enabled in non-production environments OR when MOCK_WHATSAPP_OTP=true.
  */
-const isOtpBypassEnabled = () => env.NODE_ENV !== 'production';
+const isOtpBypassEnabled = () => env.NODE_ENV !== 'production' || env.MOCK_WHATSAPP_OTP;
 
 export class OtpService {
   /**
@@ -358,8 +358,10 @@ export class OtpService {
     }
 
     // 2. Generate WhatsApp OTP
-    // Existing behavior preserved.
-    const rawOtp = TEST_OTP_BYPASS_CODE;
+    // Uses 123456 in bypass/mock mode, or random 6 digits in production
+    const rawOtp = isOtpBypassEnabled()
+      ? TEST_OTP_BYPASS_CODE
+      : crypto.randomInt(100000, 1000000).toString();
 
     const otpHash = await PasswordUtils.hashPassword(
       rawOtp
@@ -411,9 +413,15 @@ export class OtpService {
       );
     });
 
-    console.log(
-      `[OTP SERVICE] 🔑 Active WhatsApp OTP code for ${cleanPhone}: ${rawOtp}`
-    );
+    if (isOtpBypassEnabled()) {
+      console.log(
+        `[OTP SERVICE] 🔑 Active WhatsApp OTP code for ${cleanPhone}: ${rawOtp}`
+      );
+    } else {
+      console.log(
+        `[OTP SERVICE] 💬 WhatsApp OTP sent to ${cleanPhone}`
+      );
+    }
 
     return {
       success: true,
@@ -433,10 +441,10 @@ export class OtpService {
   ): Promise<boolean> {
     const cleanPhone = phone.trim();
 
-    // Existing WhatsApp bypass behavior.
+    // Bypass verification when bypass/mock mode is enabled and test code is entered
     if (
-      code === TEST_OTP_BYPASS_CODE ||
-      isOtpBypassEnabled()
+      isOtpBypassEnabled() &&
+      code === TEST_OTP_BYPASS_CODE
     ) {
       console.log(
         `[OTP BYPASS] WhatsApp verification code "${code}" accepted for ${cleanPhone}`
