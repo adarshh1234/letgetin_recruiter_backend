@@ -89,17 +89,20 @@ export const createApp = (): Express => {
   app.use(cookieParser());
 
   // Health check endpoint
-  app.get('/api/health', (_req: Request, res: Response) => {
+  const handleHealth = (_req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'ResumeBuildai API Server is healthy',
       environment: env.NODE_ENV,
       timestamp: new Date().toISOString(),
     });
-  });
+  };
+  app.get('/api/health', handleHealth);
+  app.get('/health', handleHealth);
 
   // Module Routes
   app.use('/api/auth', authRoutes);
+  app.use('/auth', authRoutes);
   app.use('/api/resumes', resumeRoutes);
   app.use('/api/ai', aiRoutes);
   app.use('/api/ai', importRoutes);
