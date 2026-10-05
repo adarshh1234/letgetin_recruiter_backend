@@ -50,6 +50,7 @@ export const createApp = (): Express => {
     'http://localhost:5173',
     'https://let-get-in-frontend.vercel.app',
     'https://letgetin-frontend-beta.vercel.app',
+    'https://letgetin-recruiter-frontend.vercel.app',
   ];
   if (env.CLIENT_URL) {
     allowedOrigins.push(env.CLIENT_URL.trim().replace(/\/$/, ''));
